@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
 namespace HomeWork30._04
 {
-    class Program
+    class Program2
     {
         static List<int> width = new List<int>();
         static object locker = new object();
@@ -49,34 +49,22 @@ namespace HomeWork30._04
                 array[i] = new Random().Next(from, untill);
             }
         }
-        static void Main(string[] args)
+        static void Main1(string[] args)
         {
             AddNumberToList();
             int[] lengthesOfString = new int[50];
             AddNumberToArray(ref lengthesOfString, 4, 11);
             int[] stringPosFromTop = new int[50];
             AddNumberToArray(ref stringPosFromTop, 11, 16);
-            List<int> lis = new List<int>();
-            for(int i = 0; i < tasks.Length;i++)
-            {
-                lis.Add(i);
-            }
             int x = 0;
             while (x != 15)
             {
                 for (int i = 0; i < 50; i++)
                 {
-                    int a = new Random().Next(0,lis.Count);
-                    tasks[i] = new Task(() => ShowMatrix(lengthesOfString[a], stringPosFromTop[a], width[a], x));
+                    tasks[i] = new Task(() => ShowMatrix(lengthesOfString[i], stringPosFromTop[i], width[i], x));
                     tasks[i].Start();
                     tasks[i].Wait();
-                    if(lis.Contains(a))
-                    lis.Remove(a);
-                    if(lis.Count == 0)
-                    for(int j = 0; j < tasks.Length;j++)
-                    {
-                        lis.Add(j);
-                    }
+                    Thread.Sleep(10);
                 }
                 Thread.Sleep(100);
                 x++;
