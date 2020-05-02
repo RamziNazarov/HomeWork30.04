@@ -1,118 +1,91 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace HomeWork30._04
 {
     class Program
     {
-        protected static string[] bolsym = { "0", "1" };
-        protected static string[] symbols = { "A", "X", "Z", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "S", "D", "F", "G", "H", "J", "K", "L", "C", "V", "B", "N", "M", "<", ">", ":", "?", "!", "#", "@", "$", "%", "^", "&", "*", "(", ")", "-", "_", "+", "=", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "~", "{", "}", ",", ".", ";", "'" };
-        protected static void WriteAt(string s, int x, int y)
-        {
-            Console.SetCursorPosition(x, y);
-            Console.Write(s);
-        }
-        public static void WriteWhite(int second, int third, string color)
+        static List<int> width = new List<int>();
+        static object locker = new object();
+        protected static string[] symbols = { "A", "X", "Z", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "S", "D", "F", "G", "H", "J", "K", "L", "C", "V", "B", "N", "M", "!", "#", "@", "$", "%", "^", "&", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "~" };
+        public static void WriteWithSomeColor(int second, int third, string color)
         {
             Console.ForegroundColor = (color == "white") ? ConsoleColor.White : (color == "green") ? ConsoleColor.Green : ConsoleColor.DarkGreen;
-            WriteAt(bolsym[new Random().Next(0, bolsym.Length)], second, third);
+            Console.SetCursorPosition(second, third);
+            Console.Write(symbols[new Random().Next(0, symbols.Length)]);
         }
-        public static void ShowMatrix()
+        static Task[] tasks = new Task[50];
+        public static void ShowMatrix(int lengthes, int x, int b, int q)
         {
-            int a = new Random().Next(0, 24);
-            int g = a;
-            int doWhile = new Random().Next(5, 15);
-            int b = new Random().Next(0, 100);
-            for (int i = 0; i < doWhile; i++)
-            {
-                if (i < doWhile && i != doWhile - 2 && i != doWhile - 1)
+                x += q;
+                for (int i = lengthes; i > -1; i--)
                 {
-                    WriteWhite(b, g, "1");
-                }
-                else if (i == doWhile - 2)
-                {
-                    WriteWhite(b, g, "green");
-                }
-                else
-                {
-                    WriteWhite(b, g, "white");
-                }
-                g++;
-            }
-            // Thread.Sleep(2000);
+                        WriteWithSomeColor(b, x, (i < lengthes && i != lengthes - 2 && i != lengthes - 1) ? "darkgreen" : (i == lengthes - 2) ? "green" : "white");
 
-            // for (int i = 0; i < doWhile; i++)
-            // {
-            //     if (i < doWhile && i != doWhile - 2 && i != doWhile - 1)
-            //     {
-            //         Console.ForegroundColor = ConsoleColor.DarkGreen;
-            //         WriteAt(symbols[new Random().Next(0, symbols.Length-1)], b, a);
-            //     }
-            //     else if (i == doWhile - 2)
-            //     {
-            //         Console.ForegroundColor = ConsoleColor.Green;
-            //         WriteAt(symbols[new Random().Next(0, 15)], b, a);
-            //     }
-            //     else
-            //     {
-            //         Console.ForegroundColor = ConsoleColor.White;
-            //         WriteAt(symbols[new Random().Next(0, 15)], b, a);
-            //     }
-            //     a++;
-            // }
+                    x--;
+                }
+                int p = Console.CursorTop;
+                while(p != 0)
+                {
+                    Console.SetCursorPosition(b, p);
+                        Console.Write(" ");
+                        p--;
+                }
         }
-        static void Main(string[] args)
+        static void AddNumberToList()
         {
             for (int i = 0; i < 100; i++)
             {
-                ShowMatrix();
-                Thread.Sleep(1000);
+                if(i%2==0)
+                    width.Add(i);
             }
-            // // Clear the screen, then save the top and left coordinates.
-            // Console.Clear();
-            // origRow = Console.CursorTop;
-            // origCol = Console.CursorLeft;
-
-
-            // // Draw the left side of a 5x5 rectangle, from top to bottom.
-            // WriteAt("+", 0, 0);
-            // WriteAt("|", 0, 1);
-            // WriteAt("|", 0, 2);
-            // WriteAt("|", 0, 3);
-            // WriteAt("+", 0, 4);
-
-            // // Draw the bottom side, from left to right.
-            // WriteAt("-", 1, 4); // shortcut: WriteAt("---", 1, 4)
-            // WriteAt("-", 2, 4); // ...
-            // WriteAt("-", 3, 4); // ...
-            // WriteAt("+", 4, 4);
-
-            // // Draw the right side, from bottom to top.
-            // WriteAt("|", 4, 3);
-            // WriteAt("|", 4, 2);
-            // WriteAt("|", 4, 1);
-            // WriteAt("+", 4, 0);
-
-            // // Draw the top side, from right to left.
-            // WriteAt("-", 3, 0); // shortcut: WriteAt("---", 1, 0)
-            // WriteAt("-", 2, 0); // ...
-            // WriteAt("-", 1, 0); // ...
-            //                     //
-            // WriteAt("All done!", 100, 6);
-            // Console.WriteLine();
-            // Console.ReadKey();
-            // Console.Write("Тестовая запись\nТестовая запись2\nТестовая запись3");
-            // int posTop = Console.CursorTop;
-            // int posLeft = Console.CursorLeft;
-
-            // for (int i = 1; i <= 30; i++)
-            // {
-            //     Console.SetCursorPosition(posTop, posLeft);
-            //     Console.Write(i);
-            //     WriteAt(i.ToString(),i,i);
-            //     Thread.Sleep(200);
-            // }
+        }
+        static void AddNumberToArray(ref int[] array, int from, int untill)
+        {
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = new Random().Next(from, untill);
+            }
+        }
+        static void Main(string[] args)
+        {
+            AddNumberToList();
+            int[] lengthesOfString = new int[50];
+            AddNumberToArray(ref lengthesOfString, 4, 11);
+            int[] stringPosFromTop = new int[50];
+            AddNumberToArray(ref stringPosFromTop, 11, 16);
+            List<int> lis = new List<int>();
+            for(int i = 0; i < tasks.Length;i++)
+            {
+                lis.Add(i);
+            }
+            int x = 0;
+            while (x != 15)
+            {
+                for (int i = 0; i < tasks.Length; i++)
+                {
+                    int a = new Random().Next(0,lis.Count);
+                    tasks[i] = new Task(() => ShowMatrix(lengthesOfString[a], stringPosFromTop[a], width[a], x));
+                    tasks[i].Start();
+                    tasks[i].Wait();
+                    Thread.Sleep(10);
+                    lis.Remove(a);
+                    if(lis.Count == 0)
+                    for(int j = 0; j < tasks.Length;j++)
+                    {
+                        lis.Add(j);
+                    }
+                }
+                Thread.Sleep(1000);
+                x++;
+                if (x == 15)
+                {
+                    Console.Clear();
+                    x = 0;
+                }
+            }
             Console.Read();
         }
     }
